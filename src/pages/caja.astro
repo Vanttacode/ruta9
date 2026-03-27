@@ -1,0 +1,24 @@
+---
+// src/pages/caja.astro
+import AdminLayout from '../layouts/AdminLayout.astro';
+import CashierDashboard from '../components/caja/CashierDashboard';
+import { supabase } from '../lib/supabase';
+
+const localSlug = Astro.url.searchParams.get('local') || 'zona-franca';
+
+const { data: location } = await supabase
+  .from('ruta9_locations')
+  .select('id, name')
+  .eq('slug', localSlug)
+  .single();
+---
+
+<AdminLayout title=`Caja - ${location?.name}`>
+  <div class="h-screen w-screen bg-[#020617] text-slate-300 overflow-hidden">
+    {location ? (
+      <CashierDashboard client:only="react" locationId={location.id} locationName={location.name} />
+    ) : (
+      <div class="p-20 text-center text-red-500 font-bold">Local no configurado.</div>
+    )}
+  </div>
+</AdminLayout>

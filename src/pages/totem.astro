@@ -1,0 +1,76 @@
+---
+// src/pages/totem.astro
+import TotemLayout from '../layouts/TotemLayout.astro';
+import TotemMenu from '../components/totem/TotemMenu';
+import { supabase } from '../lib/supabase';
+
+const LOCATION_SLUG = "zona-franca";
+
+let locationId = null;
+let products = [];
+let categories = [];
+let modifiers = [];
+
+try {
+  const { data: locData, error: locErr } = await supabase
+    .from('ruta9_locations')
+    .select('id')
+    .eq('slug', LOCATION_SLUG)
+    .single();
+    
+  if (locErr) throw new Error("Local no encontrado");
+  locationId = locData.id;
+
+  const { data: catData } = await supabase
+    .from('ruta9_categories')
+    .select('*')
+    .order('order_index');
+  categories = catData || [];
+
+  // CORRECCIÓN CRÍTICA: Traemos la tabla intermedia para saber qué extras tiene cada producto
+  const { data: prodData } = await supabase
+    .from('ruta9_products')
+    .select('*, ruta9_product_modifiers_map(modifier_id)')
+    .eq('location_id', locationId)
+    .eq('is_active', true)
+    .order('name');
+  products = prodData || [];
+
+  const { data: modData } = await supabase
+    .from('ruta9_modifiers')
+    .select('*')
+    .eq('is_active', true)
+    .order('name');
+  modifiers = modData || [];
+
+} catch (error) {
+  console.error("Error crítico de DB en Kiosco:", error);
+}
+---
+
+<TotemLayout title="Autoatención - RUTA9">
+  {/* Fondo negro puro para maximizar el contraste en pantallas grandes */}
+  <main class="fixed inset-0 w-screen h-screen bg-black text-white overflow-hidden selection:bg-transparent touch-none">
+    <TotemMenu 
+      client:only="react" 
+      locationId={locationId} 
+      categories={categories} 
+      products={products} 
+      modifiers={modifiers}
+    />
+  </main>
+</TotemLayout>
+
+<style is:global>
+  /* BLINDAJE TÁCTIL ABSOLUTO PARA EL KIOSCO */
+  body {
+    overscroll-behavior-y: none; /* Evita el "rebote" al hacer scroll */
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+</style>

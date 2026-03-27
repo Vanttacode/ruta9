@@ -1,0 +1,111 @@
+---
+// src/pages/totem-welcome.astro
+import TotemLayout from '../layouts/TotemLayout.astro';
+---
+
+<TotemLayout title="Bienvenido - RUTA9">
+  {/* El enlace envuelve toda la pantalla. Cero highlight táctil en Android. */}
+  <a 
+    href="/totem" 
+    class="relative block h-screen w-screen bg-[#050505] overflow-hidden cursor-pointer [-webkit-tap-highlight-color:transparent] select-none group"
+  >
+    {/* --- 1. FONDO DE VIDEO INMERSIVO ACELERADO POR HARDWARE --- */}
+    <video 
+        autoplay loop muted playsinline 
+        class="absolute inset-0 w-full h-full object-cover scale-105 animate-slow-zoom will-change-transform"
+    >
+        {/* Ideal: Video 1080p vertical (o centrado) de la carne en la parrilla o queso derritiéndose */}
+        <source src="/videos/burger-sizzle.mp4" type="video/mp4" />
+    </video>
+    
+    {/* --- 2. CAPAS DE ILUMINACIÓN (SPOTLIGHT & VIGNETTE) --- */}
+    {/* Oscurece los bordes y deja el centro brillante */}
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(5,5,5,0.85)_100%)] z-0"></div>
+    {/* Base oscura para asegurar que el texto inferior y superior se lea siempre */}
+    <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 z-0 mix-blend-multiply"></div>
+
+    {/* --- 3. CONTENIDO CENTRAL --- */}
+    <div class="relative z-10 h-full flex flex-col items-center justify-center p-8">
+        
+        {/* Logo RUTA9 animado suavemente al entrar */}
+        <div class="animate-fade-in-down mb-12">
+            <img 
+                src="/images/logo-ruta9.png" 
+                alt="RUTA9" 
+                class="h-44 md:h-56 object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)]" 
+            />
+        </div>
+        
+        {/* Título Masivo y Amigable */}
+        <div class="flex flex-col items-center animate-fade-in-up">
+            <h1 class="text-7xl md:text-[110px] font-black text-white uppercase tracking-tighter leading-none text-center drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
+                Pide <span class="text-[#E60000] relative inline-block">
+                    Aquí
+                    {/* Brillo sutil debajo de la palabra Aquí */}
+                    <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-2 bg-[#E60000] blur-xl rounded-full"></div>
+                </span>
+            </h1>
+            
+            <p class="mt-6 text-3xl font-medium text-white/90 tracking-wide drop-shadow-md">
+                Rápido, fácil y sin filas.
+            </p>
+        </div>
+        
+        {/* Call To Action Gigante y Pulsante (Efecto Glassmorphism + Glow) */}
+        <div class="mt-16 bg-[#E60000]/90 backdrop-blur-md border border-[#E60000] text-white font-black text-4xl md:text-5xl uppercase px-16 py-8 rounded-full shadow-[0_0_50px_rgba(230,0,0,0.4)] animate-pulse-soft flex items-center gap-6 group-hover:scale-105 transition-transform duration-300">
+            {/* Ícono de Mano/Toque (SVG Limpio) */}
+            <svg class="w-14 h-14" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"/>
+            </svg>
+            Tocar Pantalla
+        </div>
+    </div>
+
+    {/* --- 4. FOOTER SUTIL (FIRMA MOLLYCODE) --- */}
+    {/* Posicionado de forma absoluta abajo, totalmente integrado al fondo negro */}
+    <div class="absolute bottom-8 left-0 w-full text-center z-20 pointer-events-none animate-fade-in-up" style="animation-delay: 0.5s;">
+        <span class="text-[11px] md:text-sm font-bold tracking-[0.4em] text-white/30 uppercase">
+            Desarrollado por Mollycode.cl
+        </span>
+    </div>
+
+  </a>
+</TotemLayout>
+
+<style>
+    /* Animaciones Optimizadas para Android/Hardware */
+    @keyframes slow-zoom {
+        0% { transform: scale(1.02); }
+        50% { transform: scale(1.08); }
+        100% { transform: scale(1.02); }
+    }
+    
+    @keyframes fade-in-down {
+        0% { opacity: 0; transform: translateY(-40px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fade-in-up {
+        0% { opacity: 0; transform: translateY(40px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Pulso más suave y elegante que el animate-pulse nativo de Tailwind */
+    @keyframes pulse-soft {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(230,0,0,0.3); }
+        50% { transform: scale(1.03); box-shadow: 0 0 60px rgba(230,0,0,0.6); }
+    }
+
+    .animate-slow-zoom { 
+        animation: slow-zoom 25s ease-in-out infinite; 
+    }
+    .animate-fade-in-down { 
+        animation: fade-in-down 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+    }
+    .animate-fade-in-up { 
+        animation: fade-in-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+    }
+    .animate-pulse-soft {
+        animation: pulse-soft 2.5s ease-in-out infinite;
+    }
+</style>

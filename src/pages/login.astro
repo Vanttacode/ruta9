@@ -1,0 +1,182 @@
+---
+// src/pages/login.astro
+import Layout from '../layouts/AdminLayout.astro';
+import { Mail, KeyRound, ShieldCheck, ArrowRight } from 'lucide-react';
+---
+
+<Layout title="Acceso Restringido - RUTA9">
+    <main class="relative min-h-screen w-full flex flex-col items-center justify-center bg-black overflow-hidden selection:bg-[#E60000] selection:text-white px-6">
+        
+        {/* --- 1. FONDO CINEMATOGRÁFICO OSCURO --- */}
+        <div class="absolute inset-0 z-0">
+            <video 
+                autoplay loop muted playsinline 
+                class="absolute inset-0 w-full h-full object-cover z-0 opacity-40 scale-105 animate-slow-zoom"
+            >
+                <source src="/images/local.jpg" type="images/jpeg" />
+            </video>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/90 via-black/60 to-[#050505] z-0 backdrop-blur-[2px]"></div>
+        </div>
+
+        {/* --- 2. CAJA DE AUTENTICACIÓN (GLASSMORPHISM) --- */}
+        <div class="relative z-10 w-full max-w-md animate-fade-in-up">
+            
+            <div class="flex justify-center mb-8">
+                <img src="/images/logo-ruta9.png" alt="RUTA9 Logo" class="h-24 object-contain drop-shadow-[0_0_30px_rgba(230,0,0,0.3)]" />
+            </div>
+
+            <div class="bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 md:p-10 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
+                {/* Acento rojo superior */}
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#E60000] to-transparent opacity-80"></div>
+
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-[#E60000]/10 border border-[#E60000]/30 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(230,0,0,0.2)] text-[#E60000]">
+                        <ShieldCheck size={32} />
+                    </div>
+                    <h1 class="text-2xl font-black text-white uppercase tracking-widest">Portal Operativo</h1>
+                    <p class="text-xs text-slate-500 font-bold uppercase tracking-[0.2em] mt-2">Identificación Requerida</p>
+                </div>
+
+                <form id="login-form" class="space-y-6">
+                    {/* Contenedor de Error */}
+                    <div id="error-box" class="hidden bg-red-950/50 border border-red-500/50 text-red-400 text-[10px] font-bold uppercase tracking-widest p-4 rounded-xl text-center transition-all animate-shake">
+                        Credenciales Incorrectas
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="relative group">
+                            <Mail class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#E60000] transition-colors" size={20} />
+                            <input 
+                                type="email" 
+                                id="email" 
+                                required
+                                placeholder="Correo electrónico" 
+                                class="w-full bg-black/50 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white font-medium outline-none focus:border-[#E60000] focus:ring-1 focus:ring-[#E60000] transition-all placeholder:text-slate-600"
+                            />
+                        </div>
+
+                        <div class="relative group">
+                            <KeyRound class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#E60000] transition-colors" size={20} />
+                            <input 
+                                type="password" 
+                                id="password" 
+                                required
+                                placeholder="Contraseña de acceso" 
+                                class="w-full bg-black/50 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white font-mono outline-none focus:border-[#E60000] focus:ring-1 focus:ring-[#E60000] transition-all placeholder:text-slate-600 tracking-widest"
+                            />
+                        </div>
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        id="submit-btn"
+                        class="w-full bg-[#E60000] text-white py-4 rounded-xl font-black uppercase tracking-widest text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(230,0,0,0.3)] disabled:opacity-50 disabled:pointer-events-none group"
+                    >
+                        <span id="btn-text" class="flex items-center gap-2">Ingresar <ArrowRight size={18} class="group-hover:translate-x-1 transition-transform" /></span>
+                        <div id="btn-spinner" class="hidden w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                    </button>
+                </form>
+            </div>
+
+            <p class="text-center mt-8 text-[10px] font-bold text-white/30 uppercase tracking-[0.4em]">
+                INFRAESTRUCTURA RUTA9 <br/> <span class="text-white/10">v2.4 PRO</span>
+            </p>
+        </div>
+    </main>
+</Layout>
+
+<script>
+    import { supabase } from '../lib/supabase';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const form = document.getElementById('login-form') as HTMLFormElement;
+        const emailInput = document.getElementById('email') as HTMLInputElement;
+        const passwordInput = document.getElementById('password') as HTMLInputElement;
+        const errorBox = document.getElementById('error-box');
+        const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+
+        // 1. Si ya está logueado, lo pateamos directo al Hub (index)
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+            window.location.href = '/';
+            return;
+        }
+
+        // 2. Procesar el Login
+        form?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Estado de carga UI
+            if (errorBox) errorBox.classList.add('hidden');
+            if (submitBtn) submitBtn.disabled = true;
+            if (btnText) btnText.classList.add('hidden');
+            if (btnSpinner) btnSpinner.classList.remove('hidden');
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            // Llamada a Supabase Auth
+            const { error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            if (error) {
+                // Error visual
+                if (errorBox) {
+                    errorBox.textContent = "Credenciales incorrectas o usuario no registrado.";
+                    errorBox.classList.remove('hidden');
+                    // Reiniciar animación shake
+                    errorBox.classList.remove('animate-shake');
+                    void errorBox.offsetWidth; // trigger reflow
+                    errorBox.classList.add('animate-shake');
+                }
+                
+                // Restaurar botón
+                if (submitBtn) submitBtn.disabled = false;
+                if (btnText) btnText.classList.remove('hidden');
+                if (btnSpinner) btnSpinner.classList.add('hidden');
+                passwordInput.value = '';
+                passwordInput.focus();
+            } else {
+                // Éxito: Leer a dónde quería ir el usuario (o al Hub por defecto)
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirect = urlParams.get('redirect') || '';
+                
+                // Transición suave
+                document.body.style.opacity = '0';
+                document.body.style.transition = 'opacity 0.5s ease';
+                
+                setTimeout(() => {
+                    window.location.href = redirect ? `/${redirect}` : '/';
+                }, 500);
+            }
+        });
+    });
+</script>
+
+<style>
+    @keyframes slow-zoom {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    @keyframes fade-in-up {
+        0% { opacity: 0; transform: translateY(30px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        50% { transform: translateX(5px); }
+        75% { transform: translateX(-5px); }
+    }
+
+    .animate-slow-zoom { animation: slow-zoom 30s ease-in-out infinite; }
+    .animate-fade-in-up { animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-shake { animation: shake 0.4s ease-in-out; }
+</style>

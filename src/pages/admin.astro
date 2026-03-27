@@ -1,0 +1,25 @@
+---
+// src/pages/admin.astro
+import AdminLayout from '../layouts/AdminLayout.astro';
+import AdminDashboard from '../components/admin/AdminDashboard';
+import { supabase } from '../lib/supabase';
+
+// Por defecto miraremos Zona Franca, pero un Admin global podría cambiarlo luego
+const localSlug = Astro.url.searchParams.get('local') || 'zona-franca';
+
+const { data: location } = await supabase
+  .from('ruta9_locations')
+  .select('id, name')
+  .eq('slug', localSlug)
+  .single();
+---
+
+<AdminLayout title="Panel Gerencial - RUTA9">
+  <main class="h-screen w-screen bg-[#020617] text-slate-300 overflow-hidden">
+    {location ? (
+      <AdminDashboard client:only="react" locationId={location.id} locationName={location.name} />
+    ) : (
+      <div class="p-20 text-center text-red-500 font-bold text-2xl">Error: Local no encontrado.</div>
+    )}
+  </main>
+</AdminLayout>

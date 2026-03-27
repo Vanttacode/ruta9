@@ -1,0 +1,24 @@
+---
+// src/pages/menu.astro
+import AdminLayout from '../layouts/AdminLayout.astro';
+import MenuEditor from '../components/menu/MenuEditor';
+import { supabase } from '../lib/supabase';
+
+const localSlug = Astro.url.searchParams.get('local') || 'zona-franca';
+
+const { data: location } = await supabase
+  .from('ruta9_locations')
+  .select('id, name')
+  .eq('slug', localSlug)
+  .single();
+---
+
+<AdminLayout title=`Gestión de Menú - ${location?.name}`>
+  <div class="h-screen w-screen bg-[#020617] text-slate-300 overflow-hidden">
+    {location ? (
+      <MenuEditor client:only="react" locationId={location.id} />
+    ) : (
+      <div class="p-20 text-red-500">Error: Local no configurado.</div>
+    )}
+  </div>
+</AdminLayout>

@@ -1,0 +1,247 @@
+---
+// src/pages/index.astro
+import Layout from '../layouts/AdminLayout.astro';
+import { Users, Settings, Tv, Lock, LogOut } from 'lucide-react';
+---
+
+<Layout title="RUTA9 - Portal del Ecosistema">
+    {/* Pantalla de carga mientras verificamos la sesión de Supabase */}
+    <div id="auth-loader" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="w-16 h-16 border-4 border-white/10 border-t-[#E60000] rounded-full animate-spin mb-4"></div>
+        <div class="text-white/50 font-bold uppercase tracking-widest text-sm animate-pulse">Verificando Credenciales...</div>
+    </div>
+
+    <main class="relative min-h-screen w-full flex flex-col items-center justify-between bg-black overflow-hidden selection:bg-[#E60000] selection:text-white px-6 py-8 md:py-12">
+        
+        {/* --- 1. FONDO DE VIDEO INMERSIVO --- */}
+        <div class="absolute inset-0 z-0">
+            <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0 opacity-80 scale-105 animate-slow-zoom">
+                <source src="/images/local.JPG" type="images/jpeg" />
+            </video>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/30 to-black/90 z-0 backdrop-blur-[1px]"></div>
+            <div class="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.9)] z-0"></div>
+        </div>
+
+        {/* Botón de Cerrar Sesión (Supabase) */}
+        <div class="w-full max-w-7xl flex justify-end relative z-20">
+            <button id="btn-logout" class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-[#E60000] transition-colors bg-white/5 px-4 py-2 rounded-lg border border-white/5 hover:border-[#E60000]/50">
+                <LogOut size={16} /> Cerrar Sesión
+            </button>
+        </div>
+
+        <div class="w-full flex-1"></div>
+
+        {/* --- 2. CONTENIDO PRINCIPAL --- */}
+        <div class="relative z-10 flex flex-col items-center w-full max-w-2xl animate-fade-in-up">
+            
+            <div class="mb-10 md:mb-14 origin-center">
+                <img src="/images/logo-ruta9.png" alt="RUTA9 Logo" class="h-28 md:h-36 object-contain" />
+            </div>
+
+            <nav class="flex flex-col gap-6 w-full max-w-xl">
+                
+                <div class="grid grid-cols-2 gap-6 relative">
+                    
+                    {/* TÓTEM (Protegido con clave local) */}
+                    <button data-protected="true" data-target="/totem-welcome" class="group relative overflow-hidden aspect-square rounded-2xl bg-white/5 border border-white/10 p-8 flex flex-col items-center justify-center text-center backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:bg-white/10 hover:border-white/30 hover:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.5)] touch-target">
+                        <div class="absolute top-4 right-4 text-slate-600 group-hover:text-[#E60000] transition-colors"><Lock size={16}/></div>
+                        <div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-500 shadow-inner relative z-10">
+                            <Tv size={32} class="text-slate-300 group-hover:text-white transition-colors" />
+                        </div>
+                        <h2 class="font-black text-xl text-white tracking-wider mb-2 relative z-10">TÓTEM</h2>
+                        <span class="text-slate-300 text-xs font-medium uppercase tracking-[0.1em] opacity-0 -translate-y-1 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0 relative z-10">
+                            Autoatención
+                        </span>
+                    </button>
+
+                    {/* PERSONAL (Acceso Libre por estar logueado) */}
+                    <a href="/personal" class="group relative overflow-hidden aspect-square rounded-2xl bg-white/5 border border-[#E60000]/30 p-8 flex flex-col items-center justify-center text-center backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:bg-[#E60000]/10 hover:border-[#E60000] hover:shadow-[0_0_30px_rgba(230,0,0,0.3)] touch-target">
+                        <div class="absolute inset-0 bg-gradient-to-b from-[#E60000]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+                        <div class="w-16 h-16 rounded-full bg-[#E60000]/20 border border-[#E60000]/50 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_20px_rgba(230,0,0,0.4)] relative z-10">
+                            <Users size={32} class="text-[#E60000] group-hover:text-white transition-colors" />
+                        </div>
+                        <h2 class="font-black text-xl text-white tracking-wider mb-2 relative z-10">PERSONAL</h2>
+                        <span class="text-slate-200 text-xs font-medium uppercase tracking-[0.1em] opacity-0 -translate-y-1 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0 relative z-10">
+                            Caja y Cocina
+                        </span>
+                    </a>
+
+                </div>
+
+                {/* ADMINISTRACIÓN (Protegido con clave local) */}
+                <button data-protected="true" data-target="/admin" class="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 p-8 flex flex-col items-center justify-center text-center backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:bg-white/10 hover:border-white/30 hover:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.5)] touch-target w-full">
+                    <div class="absolute top-4 right-4 text-slate-600 group-hover:text-[#E60000] transition-colors"><Lock size={16}/></div>
+                    <div class="flex items-center gap-6 mb-3 relative z-10">
+                        <div class="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-inner">
+                            <Settings size={28} class="text-slate-300 group-hover:text-white transition-colors" />
+                        </div>
+                        <h2 class="font-black text-xl text-white tracking-wider">ADMINISTRACIÓN</h2>
+                    </div>
+                    <span class="text-slate-300 text-xs font-medium uppercase tracking-[0.1em] opacity-0 -translate-y-1 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0 relative z-10">
+                        Gestión, Menú y Reportes
+                    </span>
+                </button>
+
+            </nav>
+        </div>
+
+        <div class="w-full flex-1"></div>
+
+        {/* --- 3. FOOTER CORPORATIVO --- */}
+        <div class="relative z-20 text-center animate-fade-in-up mt-8" style="animation-delay: 0.5s; animation-fill-mode: both;">
+            <p class="text-[10px] md:text-xs font-medium tracking-[0.4em] text-white/30 uppercase">
+                Desarrollado y Diseñado por 
+                <a href="https://vanttacode.cl" target="_blank" rel="noopener noreferrer" class="text-white/60 hover:text-white transition-colors ml-1 font-bold">
+                    VANTTACODE.CL
+                </a>
+            </p>
+        </div>
+
+    </main>
+
+    {/* --- 4. MODAL DE CONTRASEÑA LOCAL --- */}
+    <div id="password-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="modal-box" class="bg-[#0f172a] border border-white/10 rounded-3xl p-8 max-w-sm w-full mx-4 shadow-[0_0_50px_rgba(230,0,0,0.2)] transform scale-95 transition-transform duration-300 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#E60000] to-transparent"></div>
+            
+            <div class="flex items-center justify-center w-16 h-16 bg-black/40 rounded-full border border-white/10 mx-auto mb-6 text-[#E60000]">
+                <Lock size={32} />
+            </div>
+            
+            <h3 class="text-xl font-black text-white text-center uppercase tracking-widest mb-2">Acceso Restringido</h3>
+            <p class="text-xs text-slate-500 text-center mb-6">Ingrese el PIN local para acceder a este módulo.</p>
+            
+            <form id="password-form" class="space-y-4">
+                <div>
+                    <input 
+                        type="password" 
+                        id="local-password" 
+                        placeholder="Contraseña local..." 
+                        class="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-center text-white font-mono tracking-[0.3em] outline-none focus:border-[#E60000] focus:ring-1 focus:ring-[#E60000] transition-all"
+                        autocomplete="off"
+                    />
+                    <p id="password-error" class="text-[#E60000] text-[10px] font-bold uppercase tracking-widest text-center mt-2 opacity-0 transition-opacity">Contraseña Incorrecta</p>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button type="button" id="btn-cancel" class="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-colors">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-[#E60000] hover:brightness-110 text-white py-3 rounded-xl font-black text-sm uppercase tracking-widest shadow-lg shadow-red-900/20 transition-all">Ingresar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</Layout>
+
+<script>
+    import { supabase } from '../lib/supabase';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        // --- 1. VERIFICACIÓN DE SESIÓN SUPABASE ---
+        const authLoader = document.getElementById('auth-loader');
+        
+        try {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            
+            if (error || !session) {
+                // Si no hay sesión, lo enviamos al login
+                window.location.href = '/login';
+                return;
+            }
+            
+            // Si hay sesión, ocultamos el loader con una transición suave
+            if (authLoader) {
+                authLoader.style.opacity = '0';
+                setTimeout(() => authLoader.style.display = 'none', 500);
+            }
+        } catch (err) {
+            window.location.href = '/login';
+        }
+
+        // --- 2. LÓGICA DE CERRAR SESIÓN ---
+        document.getElementById('btn-logout')?.addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            window.location.href = '/login';
+        });
+
+        // --- 3. LÓGICA DEL MODAL DE CONTRASEÑA LOCAL ---
+        const modal = document.getElementById('password-modal');
+        const modalBox = document.getElementById('modal-box');
+        const btnCancel = document.getElementById('btn-cancel');
+        const form = document.getElementById('password-form');
+        const input = document.getElementById('local-password') as HTMLInputElement;
+        const errorText = document.getElementById('password-error');
+        
+        let currentTarget = '';
+
+        const openModal = (target: string) => {
+            currentTarget = target;
+            if (modal && modalBox && input) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modalBox.classList.remove('scale-95');
+                modalBox.classList.add('scale-100');
+                input.value = '';
+                if(errorText) errorText.style.opacity = '0';
+                setTimeout(() => input.focus(), 100); // Autofocus para escribir rápido
+            }
+        };
+
+        const closeModal = () => {
+            if (modal && modalBox) {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modalBox.classList.remove('scale-100');
+                modalBox.classList.add('scale-95');
+            }
+        };
+
+        // Escuchar clics en los botones protegidos
+        document.querySelectorAll('button[data-protected="true"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const target = (e.currentTarget as HTMLButtonElement).getAttribute('data-target');
+                if (target) openModal(target);
+            });
+        });
+
+        btnCancel?.addEventListener('click', closeModal);
+
+        // Validar contraseña
+        form?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!input || !errorText) return;
+
+            if (input.value === 'ruta9') {
+                // Correcto: Viajamos a la URL
+                window.location.href = currentTarget;
+            } else {
+                // Incorrecto: Mostramos error y agitamos el modal
+                errorText.style.opacity = '1';
+                modalBox?.classList.add('animate-shake');
+                input.value = '';
+                setTimeout(() => modalBox?.classList.remove('animate-shake'), 500);
+            }
+        });
+    });
+</script>
+
+<style>
+    @keyframes slow-zoom {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    @keyframes fade-in-up {
+        0% { opacity: 0; transform: translateY(30px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        50% { transform: translateX(5px); }
+        75% { transform: translateX(-5px); }
+    }
+
+    .animate-slow-zoom { animation: slow-zoom 30s ease-in-out infinite; }
+    .animate-fade-in-up { animation: fade-in-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-shake { animation: shake 0.4s ease-in-out; }
+</style>

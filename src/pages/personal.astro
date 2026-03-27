@@ -1,0 +1,173 @@
+---
+// src/pages/personal.astro
+import AdminLayout from '../layouts/AdminLayout.astro';
+import { ChefHat, MonitorDot, UtensilsCrossed, Tv, MapPin, ChevronDown, ArrowLeft } from 'lucide-react';
+---
+
+<AdminLayout title="Portal Operativo - RUTA9">
+    <main class="relative min-h-screen w-full flex flex-col items-center bg-black overflow-hidden selection:bg-[#E60000] selection:text-white px-6 py-8 md:py-12">
+        
+        {/* --- 1. FONDO DE IMAGEN INMERSIVO (CORREGIDO) --- */}
+        <div class="absolute inset-0 z-0">
+            {/* Imagen: Estática, alineada a la izquierda, sin zoom. Opacidad 50% para que se note la imagen. */}
+            <img 
+                src="/images/local2.jpg" 
+                alt="Fondo de Cocina RUTA9" 
+                class="absolute inset-0 w-full h-full object-cover object-left z-0 opacity-50"
+            />
+            {/* Overlay: Negro semitransparente (70%) + Efecto de Vidrio Esmerilado (Blur Medio) */}
+            <div class="absolute inset-0 bg-black/70 z-0 backdrop-blur-md"></div>
+        </div>
+
+        {/* --- 2. HEADER & SELECTOR --- */}
+        <header class="w-full max-w-7xl flex flex-col md:flex-row justify-between items-center relative z-10 mb-16 animate-fade-in-down gap-6 border-b border-white/5 pb-8">
+            
+            <div class="flex items-center gap-6">
+                <a href="/" class="flex items-center gap-3 text-white/50 hover:text-white transition-colors group">
+                    <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors border border-white/10">
+                        <ArrowLeft size={20} />
+                    </div>
+                </a>
+                {/* Logo limpio, sin difuminado rojo */}
+                <img src="/images/logo-ruta9.png" alt="RUTA9" class="h-16 object-contain" />
+            </div>
+
+            {/* Selector de Local Integrado */}
+            <div class="relative group w-full md:w-80">
+                <label class="absolute -top-3 left-4 px-2 bg-[#050505] text-white/40 text-[10px] font-bold tracking-[0.3em] uppercase z-10">
+                    Sucursal
+                </label>
+                <select 
+                    id="location-selector"
+                    class="w-full appearance-none bg-white/5 border border-white/10 text-white font-bold text-xl py-5 pl-6 pr-14 rounded-xl outline-none transition-all cursor-pointer hover:border-white/20 focus:border-[#E60000] focus:ring-1 focus:ring-[#E60000]"
+                >
+                    <option value="zona-franca" class="bg-slate-900 text-white">Zona Franca</option>
+                    <option value="central" disabled class="bg-slate-900 text-white/30">Local Central (Próximamente)</option>
+                </select>
+                <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-[#E60000]/70 group-hover:text-[#E60000] transition-colors">
+                    <ChevronDown size={24} />
+                </div>
+            </div>
+        </header>
+
+        {/* --- 3. GRILA OPERATIVA SIMÉTRICA (2x2) --- */}
+        <div class="relative z-10 flex-1 flex items-center justify-center w-full max-w-7xl animate-fade-in-up pb-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                
+                {/* Tarjeta: PANTALLA COCINA */}
+                <a 
+                    href="/cocina?local=zona-franca" 
+                    data-base-url="/cocina"
+                    class="action-card group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 p-10 flex gap-8 items-center backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] touch-target"
+                >
+                    <div class="w-24 h-24 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-inner relative z-10">
+                        <ChefHat size={48} class="text-slate-300 group-hover:text-white transition-colors" />
+                    </div>
+                    <div class="flex flex-col relative z-10">
+                        <h2 class="font-black text-3xl text-white tracking-tight mb-2 uppercase">Cocina</h2>
+                        <p class="text-white/50 text-base font-medium leading-relaxed">
+                            Visualizador KDS en tiempo real. Gestiona comandas y marca pedidos listos.
+                        </p>
+                    </div>
+                </a>
+
+                {/* Tarjeta: CAJA Y ENTREGAS */}
+                <a 
+                    href="/caja?local=zona-franca" 
+                    data-base-url="/caja"
+                    class="action-card group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 p-10 flex gap-8 items-center backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] touch-target"
+                >
+                    <div class="w-24 h-24 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-inner relative z-10">
+                        <MonitorDot size={48} class="text-slate-300 group-hover:text-white transition-colors" />
+                    </div>
+                    <div class="flex flex-col relative z-10">
+                        <h2 class="font-black text-3xl text-white tracking-tight mb-2 uppercase">Caja</h2>
+                        <p class="text-white/50 text-base font-medium leading-relaxed">
+                            Control de entregas y contingencia. Visualiza listos y finaliza órdenes.
+                        </p>
+                    </div>
+                </a>
+
+                {/* Tarjeta: GESTIÓN DE MENÚ */}
+                <a 
+                    href="/menu?local=zona-franca" 
+                    data-base-url="/menu"
+                    class="action-card group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 p-10 flex gap-8 items-center backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] touch-target"
+                >
+                    <div class="w-24 h-24 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-inner relative z-10">
+                        <UtensilsCrossed size={48} class="text-slate-300 group-hover:text-white transition-colors" />
+                    </div>
+                    <div class="flex flex-col relative z-10">
+                        <h2 class="font-black text-3xl text-white tracking-tight mb-2 uppercase">Menú</h2>
+                        <p class="text-white/50 text-base font-medium leading-relaxed">
+                            Administración del catálogo. Activa productos y gestiona precios de la sucursal.
+                        </p>
+                    </div>
+                </a>
+
+                {/* Tarjeta: TV CLIENTES (Status Board) - Destacada en Rojo */}
+                <a 
+                    href="/tv?local=zona-franca" 
+                    data-base-url="/tv"
+                    class="action-card group relative overflow-hidden rounded-3xl bg-[#E60000]/5 border border-[#E60000]/20 p-10 flex gap-8 items-center backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:bg-[#E60000]/10 hover:border-[#E60000] hover:shadow-[0_0_50px_rgba(230,0,0,0.3)] touch-target"
+                >
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#E60000]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl"></div>
+                    <div class="w-24 h-24 rounded-2xl bg-[#E60000]/10 border border-[#E60000]/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_20px_rgba(230,0,0,0.2)] relative z-10">
+                        <Tv size={48} class="text-[#E60000] group-hover:text-white transition-colors" />
+                    </div>
+                    <div class="flex flex-col relative z-10">
+                        <h2 class="font-black text-3xl text-white tracking-tight mb-2 uppercase">TV Clientes</h2>
+                        <p class="text-white/70 text-base font-medium leading-relaxed">
+                            Pantalla pública de estados. Muestra números "Preparando" y "Listos" en tiempo real.
+                        </p>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        {/* --- 4. FOOTER CORPORATIVO SUTIL --- */}
+        <footer class="w-full max-w-7xl flex justify-center relative z-10 animate-fade-in-up mt-auto pt-10" style="animation-delay: 0.5s;">
+            <p class="text-[10px] md:text-xs font-bold tracking-[0.5em] text-white/20 uppercase border-t border-white/5 pt-6 w-full text-center">
+                Desarrollado por MOLLYCODE.CL
+            </p>
+        </footer>
+
+    </main>
+</AdminLayout>
+
+<script>
+    // Lógica para actualizar las URLs dinámicamente según el local seleccionado
+    document.addEventListener('DOMContentLoaded', () => {
+        const selector = document.getElementById('location-selector') as HTMLSelectElement;
+        const cards = document.querySelectorAll('.action-card');
+
+        const updateLinks = (local: string) => {
+            cards.forEach(card => {
+                const baseUrl = card.getAttribute('data-base-url');
+                if (baseUrl) {
+                    card.setAttribute('href', `${baseUrl}?local=${local}`);
+                }
+            });
+        };
+
+        selector?.addEventListener('change', (e) => {
+            updateLinks((e.target as HTMLSelectElement).value);
+        });
+
+        if (selector) updateLinks(selector.value);
+    });
+</script>
+
+<style>
+    @keyframes fade-in-down {
+        0% { opacity: 0; transform: translateY(-20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in-up {
+        0% { opacity: 0; transform: translateY(30px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-down { animation: fade-in-down 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-fade-in-up { animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+</style>

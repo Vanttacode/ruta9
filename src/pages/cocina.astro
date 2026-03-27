@@ -1,0 +1,35 @@
+---
+// src/pages/cocina.astro
+import AdminLayout from '../layouts/AdminLayout.astro';
+import KitchenBoard from '../components/cocina/KitchenBoard';
+import { supabase } from '../lib/supabase';
+
+// Como Astro se ejecuta en el servidor (SSR), leemos el parámetro de la URL
+const localSlug = Astro.url.searchParams.get('local') || 'zona-franca';
+
+// Buscamos el ID real del local para que la cocina solo escuche sus propios pedidos
+let locationId = null;
+try {
+  const { data } = await supabase
+    .from('ruta9_locations')
+    .select('id')
+    .eq('slug', localSlug)
+    .single();
+  
+  if (data) locationId = data.id;
+} catch (e) {
+  console.error("Error buscando local:", e);
+}
+---
+
+<AdminLayout title="KDS Cocina - RUTA9">
+  <main class="h-screen w-screen bg-[#050505] overflow-hidden text-white selection:bg-[#E60000]">
+    {locationId ? (
+      <KitchenBoard client:only="react" locationId={locationId} locationName={localSlug} />
+    ) : (
+      <div class="flex items-center justify-center h-full text-3xl font-bold text-red-500">
+        Error: Local no encontrado en la base de datos.
+      </div>
+    )}
+  </main>
+</AdminLayout>

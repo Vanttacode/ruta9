@@ -1,0 +1,35 @@
+---
+// src/layouts/TotemLayout.astro
+import '../styles/global.css';
+interface Props { title: string; }
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>{title}</title>
+  </head>
+  <body class="antialiased totem-mode">
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  /* RESTRICCIONES ESTRICTAS SOLO PARA EL TÓTEM */
+  .totem-mode {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden !important; /* Cortamos el scroll nativo */
+    user-select: none; /* Bloquea selección de texto */
+    -webkit-user-select: none;
+    -webkit-touch-callout: none; /* Bloquea menú contextual */
+    touch-action: pan-y; /* Permite scroll interno, bloquea zoom */
+  }
+
+  /* Ocultar barra de desplazamiento en el tótem */
+  .totem-mode ::-webkit-scrollbar {
+    display: none;
+  }
+</style>

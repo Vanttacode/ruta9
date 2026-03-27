@@ -1,0 +1,24 @@
+---
+// src/pages/tv.astro
+import TotemLayout from '../layouts/TotemLayout.astro';
+import StatusBoard from '../components/tv/StatusBoard';
+import { supabase } from '../lib/supabase';
+
+const localSlug = Astro.url.searchParams.get('local') || 'zona-franca';
+
+const { data: location } = await supabase
+  .from('ruta9_locations')
+  .select('id, name')
+  .eq('slug', localSlug)
+  .single();
+---
+
+<TotemLayout title=`Pedidos - ${location?.name}`>
+  <main class="h-screen w-screen bg-[#050505] overflow-hidden text-white">
+    {location ? (
+      <StatusBoard client:only="react" locationId={location.id} />
+    ) : (
+      <div class="h-full flex items-center justify-center text-2xl text-red-500">Local no encontrado</div>
+    )}
+  </main>
+</TotemLayout>

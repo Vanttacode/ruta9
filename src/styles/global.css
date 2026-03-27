@@ -1,0 +1,26 @@
+/* src/styles/global.css */
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #E60000;
+  --color-brand-dark: #990000;
+  --color-bg-dark: #0f172a;
+}
+
+/* Base normal y responsiva para todo el proyecto */
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-bg-dark);
+    color: white;
+  }
+}
+
+@layer utilities {
+  .touch-target {
+    min-height: 64px;
+    min-width: 64px;
+    cursor: pointer;
+  }
+}
